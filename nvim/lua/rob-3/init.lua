@@ -30,12 +30,16 @@ lsp.setup()
 
 local cmp = require("cmp")
 local cmp_config = lsp.defaults.cmp_config()
+cmp_config.preselect = 'none'
+cmp_config.completion.completeopt = "menu,menuone,noinsert,noselect"
 cmp_config.mapping["<C-Space>"] = cmp_config.mapping["<C-e>"]
 --cmp_config.mapping['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() })
 --cmp_config.mapping["<C-l>"] = cmp.mapping.confirm({ select = false })
 cmp_config.mapping["<Tab>"] = nil
 cmp_config.mapping["<S-Tab>"] = nil
 --cmp_config.mapping["<CR>"] = nil
+cmp_config.mapping["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), {'i','c'})
+cmp_config.mapping["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), {'i','c'})
 cmp_config.experimental = { ghost_text = false }
 cmp_config.sources = {
 	{ name = "path" },
@@ -62,17 +66,33 @@ cmp.event:on(
 require("nvim-surround").setup({})
 
 -- telescope
-local telescope = require("telescope")
-telescope.setup{
-	defaults = {
-		file_ignore_patterns = { "COMMIT_EDITMSG" }
-	}
-}
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>f", builtin.find_files, {})
-vim.keymap.set("n", "<leader>g", builtin.live_grep, {})
-vim.keymap.set("n", "<leader>p", builtin.oldfiles, {})
-telescope.load_extension("fzf")
+--local telescope = require("telescope")
+--telescope.setup{
+	--defaults = {
+		--file_ignore_patterns = { "COMMIT_EDITMSG" },
+		--preview = false
+	--}
+--}
+--local builtin = require("telescope.builtin")
+--vim.keymap.set("n", "<leader>f", builtin.find_files, {})
+--vim.keymap.set("n", "<leader>g", builtin.live_grep, {})
+--vim.keymap.set("n", "<leader>p", builtin.oldfiles, {})
+--vim.keymap.set("n", "<leader>gs", builtin.grep_string, {})
+--telescope.load_extension("fzf")
+vim.keymap.set("n", "<leader>f", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>g", "<cmd>lua require('fzf-lua').live_grep_native()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>p", "<cmd>lua require('fzf-lua').oldfiles()<CR>", { noremap = true, silent = true })
+
+-- greatest remap ever
+vim.keymap.set("x", "<leader>p", "\"_dP")
+
+-- next greatest remap ever : asbjornHaland
+vim.keymap.set("n", "<leader>y", "\"+y")
+vim.keymap.set("v", "<leader>y", "\"+y")
+vim.keymap.set("n", "<leader>Y", "\"+Y")
+
+vim.keymap.set("n", "<leader>d", "\"_d")
+vim.keymap.set("v", "<leader>d", "\"_d")
 
 -- treesitter
 require("nvim-treesitter.configs").setup {
