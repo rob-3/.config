@@ -1,6 +1,96 @@
 require("rob-3.remap")
 require("rob-3.set")
 
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+	  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+	"folke/tokyonight.nvim",
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = function()
+			local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
+			ts_update()
+		end,
+	},
+	"mbbill/undotree",
+	"tpope/vim-fugitive",
+	"farmergreg/vim-lastplace",
+	"kylechui/nvim-surround",
+	"airblade/vim-gitgutter",
+	"norcalli/nvim-colorizer.lua",
+	"NMAC427/guess-indent.nvim",
+	{
+		'nvim-telescope/telescope-fzf-native.nvim',
+		build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+	},
+	{
+		'VonHeikemen/lsp-zero.nvim',
+		dependencies = {
+			-- LSP Support
+			{'neovim/nvim-lspconfig'},
+			{'williamboman/mason.nvim'},
+			{'williamboman/mason-lspconfig.nvim'},
+
+			-- Autocompletion
+			{'hrsh7th/nvim-cmp'},
+			{'hrsh7th/cmp-buffer'},
+			{'hrsh7th/cmp-path'},
+			{'saadparwaiz1/cmp_luasnip'},
+			{'hrsh7th/cmp-nvim-lsp'},
+			{'hrsh7th/cmp-nvim-lua'},
+
+			-- Snippets
+			{'L3MON4D3/LuaSnip'},
+			{'rafamadriz/friendly-snippets'},
+		}
+	},
+	'windwp/nvim-autopairs',
+	{
+		"themaxmarchuk/tailwindcss-colors.nvim",
+		-- load only on require("tailwindcss-colors")
+		module = "tailwindcss-colors",
+		-- run the setup function after plugin is loaded 
+		config = function ()
+			-- pass config options here (or nothing to defaults)
+			require("tailwindcss-colors").setup()
+		end
+	},
+	"github/copilot.vim",
+	{ 'weilbith/nvim-code-action-menu',
+		cmd = 'CodeActionMenu',
+	},
+	{ 'ibhagwan/fzf-lua' }
+}, 
+{
+  ui = {
+    icons = {
+      cmd = "⌘",
+      config = "🛠",
+      event = "📅",
+      ft = "📂",
+      init = "⚙",
+      keys = "🗝",
+      plugin = "🔌",
+      runtime = "💻",
+      source = "📄",
+      start = "🚀",
+      task = "📌",
+      lazy = "💤 ",
+    },
+  },
+})
+
 -- undotree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
