@@ -16,6 +16,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	"folke/tokyonight.nvim",
+--	{
+--		'nvim-telescope/telescope.nvim', tag = '0.1.1',
+--		-- or                            , branch = '0.1.x',
+--		dependencies = { {'nvim-lua/plenary.nvim'} }
+--	},
+--	{'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = function()
@@ -30,10 +36,6 @@ require("lazy").setup({
 	"airblade/vim-gitgutter",
 	"norcalli/nvim-colorizer.lua",
 	"NMAC427/guess-indent.nvim",
-	{
-		'nvim-telescope/telescope-fzf-native.nvim',
-		build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
-	},
 	{
 		'VonHeikemen/lsp-zero.nvim',
 		dependencies = {
@@ -55,7 +57,7 @@ require("lazy").setup({
 			{'rafamadriz/friendly-snippets'},
 		}
 	},
-	'windwp/nvim-autopairs',
+	--'windwp/nvim-autopairs',
 	{
 		"themaxmarchuk/tailwindcss-colors.nvim",
 		-- load only on require("tailwindcss-colors")
@@ -66,11 +68,11 @@ require("lazy").setup({
 			require("tailwindcss-colors").setup()
 		end
 	},
-	"github/copilot.vim",
+	--"github/copilot.vim",
 	{ 'weilbith/nvim-code-action-menu',
 		cmd = 'CodeActionMenu',
 	},
-	{ 'ibhagwan/fzf-lua' }
+	{ 'ibhagwan/fzf-lua' },
 }, 
 {
   ui = {
@@ -140,17 +142,17 @@ cmp_config.sources = {
 cmp.setup(cmp_config)
 
 -- nvim-autopairs
-local npairs = require("nvim-autopairs")
-npairs.setup({
-	check_ts = true,
-	break_undo = false,
-})
-local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-local cmp = require("cmp")
-cmp.event:on(
-	"confirm_done",
-	cmp_autopairs.on_confirm_done()
-)
+--local npairs = require("nvim-autopairs")
+--npairs.setup({
+--	check_ts = true,
+--	break_undo = false,
+--})
+--local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+--local cmp = require("cmp")
+--cmp.event:on(
+--	"confirm_done",
+--	cmp_autopairs.on_confirm_done()
+--)
 
 -- nvim-surround
 require("nvim-surround").setup({})
@@ -169,7 +171,13 @@ require("nvim-surround").setup({})
 --vim.keymap.set("n", "<leader>p", builtin.oldfiles, {})
 --vim.keymap.set("n", "<leader>gs", builtin.grep_string, {})
 --telescope.load_extension("fzf")
-vim.keymap.set("n", "<leader>f", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
+require("fzf-lua").setup {
+	oldfiles = {
+		include_current_session = true
+	}
+}
+
+vim.keymap.set("n", "<leader>f", "<cmd>lua require('fzf-lua').files({ cmd = vim.env.FZF_DEFAULT_COMMAND, include_current_session = true })<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>g", "<cmd>lua require('fzf-lua').live_grep_native()<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>p", "<cmd>lua require('fzf-lua').oldfiles()<CR>", { noremap = true, silent = true })
 
@@ -245,3 +253,9 @@ nvim_lsp["tailwindcss"].setup({
 	on_attach = on_attach,
 })
 nvim_lsp.pyright.setup({})
+
+--local cp_enabled = true
+--vim.keymap.set("n", "<leader>c", function ()
+	--if cp_enabled then else end
+--end)
+--

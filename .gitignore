@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!nvim/lua/
+!gh/
+!nvim/lua/
+!nvim/spell/
+!wezterm/
