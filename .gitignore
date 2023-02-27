@@ -1,7 +1,7 @@
 /*
 !.gitignore
 !nvim/lua/
-!gh/
+!gh/config.yml
 !nvim/lua/
 !nvim/spell/
 !wezterm/
