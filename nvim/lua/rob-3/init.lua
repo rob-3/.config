@@ -34,7 +34,7 @@ require("lazy").setup({
 	"farmergreg/vim-lastplace",
 	"kylechui/nvim-surround",
 	"airblade/vim-gitgutter",
-	"norcalli/nvim-colorizer.lua",
+	"nvchad/nvim-colorizer.lua",
 	"NMAC427/guess-indent.nvim",
 	{
 		'VonHeikemen/lsp-zero.nvim',
@@ -241,18 +241,18 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 vim.api.nvim_create_user_command("Format", function() vim.lsp.buf.format() end, {})
 
 -- tailwind colors
-local nvim_lsp = require("lspconfig")
+--local nvim_lsp = require("lspconfig")
 
-local on_attach = function(client, bufnr)
+--local on_attach = function(client, bufnr)
 	-- other stuff
-	require("tailwindcss-colors").buf_attach(bufnr)
-end
+	--require("tailwindcss-colors").buf_attach(bufnr)
+--end
 
-nvim_lsp["tailwindcss"].setup({
+--nvim_lsp["tailwindcss"].setup({
 	-- other settings
-	on_attach = on_attach,
-})
-nvim_lsp.pyright.setup({})
+	--on_attach = on_attach,
+--})
+--nvim_lsp.pyright.setup({})
 
 --local cp_enabled = true
 --vim.keymap.set("n", "<leader>c", function ()
@@ -261,3 +261,11 @@ nvim_lsp.pyright.setup({})
 --
 
 vim.opt.mouse = ""
+
+require("colorizer").setup({
+	user_default_options = {
+		mode = "background",
+		tailwind = true,
+		css = true,
+	},
+})
