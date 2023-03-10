@@ -8,7 +8,7 @@ chmod u+x ./nvim.appimage
 ./nvim.appimage --appimage-extract
 cd $original_dir
 
-cp nvimwrapper /usr/bin/nvim
+echo 'alias nvim="~/squashfs-root/AppRun \"$@\""' >> ~/.bashrc
 
 mkdir ~/.config
 cp -r * ~/.config/
