@@ -68,7 +68,7 @@ require("lazy").setup({
 			require("tailwindcss-colors").setup()
 		end
 	},
-	--"github/copilot.vim",
+	"github/copilot.vim",
 	{ 'weilbith/nvim-code-action-menu',
 		cmd = 'CodeActionMenu',
 	},
@@ -259,3 +259,5 @@ nvim_lsp.pyright.setup({})
 	--if cp_enabled then else end
 --end)
 --
+
+vim.opt.mouse = ""

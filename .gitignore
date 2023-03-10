@@ -2,7 +2,6 @@
 !.gitignore
 !nvim/lua/
 !gh/config.yml
-!nvim/lua/
 !nvim/spell/
 !wezterm/
 !kitty
