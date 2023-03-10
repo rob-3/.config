@@ -9,4 +9,5 @@ chmod u+x ./nvim.appimage
 alias nvim="/tmp/squashfs-root/AppRun"
 cd $original_dir
 
+mkdir ~/.config
 cp -r * ~/.config/
