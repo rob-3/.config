@@ -1,5 +1,5 @@
 vim.wo.number = true
-vim.wo.relativenumber = true
+--vim.wo.relativenumber = true
 vim.g.netrw_banner = false
 vim.opt.termguicolors = true
 vim.opt.incsearch = true

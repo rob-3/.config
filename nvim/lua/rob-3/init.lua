@@ -1,6 +1,18 @@
 require("rob-3.remap")
 require("rob-3.set")
 
+local function is_file_small(file)
+	file = file or "%"
+	local file_size = vim.api.nvim_call_function("getfsize", { vim.fn.expand(file) })
+	return file_size < 256 * 1024
+end
+
+local is_small = is_file_small()
+
+if not is_small then
+	vim.api.nvim_command("syntax off")
+end
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	  vim.fn.system({
@@ -50,12 +62,13 @@ require("lazy").setup({
 			{'hrsh7th/cmp-path'},
 			{'saadparwaiz1/cmp_luasnip'},
 			{'hrsh7th/cmp-nvim-lsp'},
-			{'hrsh7th/cmp-nvim-lua'},
+			-- not under license!
+			--{'hrsh7th/cmp-nvim-lua'},
 
 			-- Snippets
 			{'L3MON4D3/LuaSnip'},
 			{'rafamadriz/friendly-snippets'},
-		}
+		},
 	},
 	--'windwp/nvim-autopairs',
 	{
@@ -69,11 +82,32 @@ require("lazy").setup({
 		end
 	},
 	"github/copilot.vim",
-	{ 'weilbith/nvim-code-action-menu',
-		cmd = 'CodeActionMenu',
-	},
+--	{ 'weilbith/nvim-code-action-menu',
+--		cmd = 'CodeActionMenu',
+--	},
 	{ 'ibhagwan/fzf-lua' },
-}, 
+--	{
+--		"jackMort/ChatGPT.nvim",
+--		config = function()
+--			local chatgpt = require("chatgpt").setup({
+--				chat = {
+--					question_sign = ">",
+--					keymaps = {
+--						select_session = "<CR>",
+--					}
+--				}
+--			})
+--			vim.keymap.set("n", "<leader><leader>", ":ChatGPT<CR>")
+--			vim.keymap.set("v", "<leader>rf", ":<C-U>:ChatGPTEditWithInstructions<CR>")
+--			vim.keymap.set("v", "<leader><leader>", "y:ChatGPT<CR><Esc>pggO")
+--		end,
+--		dependencies = {
+--			"MunifTanjim/nui.nvim",
+--			"nvim-lua/plenary.nvim",
+--			"nvim-telescope/telescope.nvim"
+--		}
+--	},
+},
 {
   ui = {
     icons = {
@@ -160,10 +194,10 @@ require("nvim-surround").setup({})
 -- telescope
 --local telescope = require("telescope")
 --telescope.setup{
-	--defaults = {
-		--file_ignore_patterns = { "COMMIT_EDITMSG" },
-		--preview = false
-	--}
+--defaults = {
+--file_ignore_patterns = { "COMMIT_EDITMSG" },
+--preview = false
+--}
 --}
 --local builtin = require("telescope.builtin")
 --vim.keymap.set("n", "<leader>f", builtin.find_files, {})
@@ -172,6 +206,9 @@ require("nvim-surround").setup({})
 --vim.keymap.set("n", "<leader>gs", builtin.grep_string, {})
 --telescope.load_extension("fzf")
 require("fzf-lua").setup {
+	winopts = {
+		preview = { default = "bat" },
+	},
 	oldfiles = {
 		include_current_session = true
 	}
@@ -180,17 +217,20 @@ require("fzf-lua").setup {
 vim.keymap.set("n", "<leader>f", "<cmd>lua require('fzf-lua').files({ cmd = vim.env.FZF_DEFAULT_COMMAND, include_current_session = true })<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>g", "<cmd>lua require('fzf-lua').live_grep_native()<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>p", "<cmd>lua require('fzf-lua').oldfiles()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>c", "<cmd>lua require('fzf-lua').commands()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>i", "<cmd>lua require('fzf-lua').git_files()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>a", "<cmd>lua require('fzf-lua').lsp_code_actions()<CR>", { noremap = true, silent = true })
 
 -- greatest remap ever
-vim.keymap.set("x", "<leader>p", "\"_dP")
+--vim.keymap.set("x", "<leader>p", "\"_dP")
 
 -- next greatest remap ever : asbjornHaland
-vim.keymap.set("n", "<leader>y", "\"+y")
-vim.keymap.set("v", "<leader>y", "\"+y")
-vim.keymap.set("n", "<leader>Y", "\"+Y")
+--vim.keymap.set("n", "<leader>y", "\"+y")
+--vim.keymap.set("v", "<leader>y", "\"+y")
+--vim.keymap.set("n", "<leader>Y", "\"+Y")
 
-vim.keymap.set("n", "<leader>d", "\"_d")
-vim.keymap.set("v", "<leader>d", "\"_d")
+--vim.keymap.set("n", "<leader>d", "\"_d")
+--vim.keymap.set("v", "<leader>d", "\"_d")
 
 -- treesitter
 require("nvim-treesitter.configs").setup {
@@ -214,7 +254,11 @@ require("nvim-treesitter.configs").setup {
 		-- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
 		-- the name of the parser)
 		-- list of language that will be disabled
-		disable = {},
+		disable = function(_, bufnr)
+			local buf_name = vim.api.nvim_buf_get_name(bufnr)
+			local file_size = vim.api.nvim_call_function("getfsize", { buf_name })
+			return file_size > 256 * 1024
+		end,
 
 		-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
 		-- Set this to `true` if you depend on "syntax" being enabled (like for indentation).
@@ -240,26 +284,6 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 })
 vim.api.nvim_create_user_command("Format", function() vim.lsp.buf.format() end, {})
 
--- tailwind colors
---local nvim_lsp = require("lspconfig")
-
---local on_attach = function(client, bufnr)
-	-- other stuff
-	--require("tailwindcss-colors").buf_attach(bufnr)
---end
-
---nvim_lsp["tailwindcss"].setup({
-	-- other settings
-	--on_attach = on_attach,
---})
---nvim_lsp.pyright.setup({})
-
---local cp_enabled = true
---vim.keymap.set("n", "<leader>c", function ()
-	--if cp_enabled then else end
---end)
---
-
 vim.opt.mouse = ""
 
 require("colorizer").setup({
@@ -267,5 +291,25 @@ require("colorizer").setup({
 		mode = "background",
 		tailwind = true,
 		css = true,
+		always_update = true,
 	},
+})
+
+vim.api.nvim_create_autocmd({ "BufReadPre" }, {
+	callback = function()
+		if not is_file_small(vim.fn.expand("<afile>")) then
+			vim.cmd("setlocal syntax=off")
+			vim.cmd("TSBufDisable highlight")
+			cmp_config.enabled = function()
+				if vim.bo.buftype == 'prompt' then
+					return false
+				end
+				if is_file_small(vim.fn.expand("<afile>")) then
+					return false
+				end
+				return true
+			end
+			cmp.setup(cmp_config)
+		end
+	end
 })
