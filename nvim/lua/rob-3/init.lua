@@ -70,7 +70,13 @@ require("lazy").setup({
 			{'rafamadriz/friendly-snippets'},
 		},
 	},
-	--'windwp/nvim-autopairs',
+	{
+		'windwp/nvim-autopairs',
+		event = "InsertEnter",
+		opts = {
+			disable_filetype = { 'clojure' }
+		},
+	},
 	{
 		"themaxmarchuk/tailwindcss-colors.nvim",
 		-- load only on require("tailwindcss-colors")
@@ -82,6 +88,7 @@ require("lazy").setup({
 		end
 	},
 	"github/copilot.vim",
+	"sbdchd/neoformat",
 --	{ 'weilbith/nvim-code-action-menu',
 --		cmd = 'CodeActionMenu',
 --	},
@@ -105,6 +112,16 @@ require("lazy").setup({
 --			"MunifTanjim/nui.nvim",
 --			"nvim-lua/plenary.nvim",
 --			"nvim-telescope/telescope.nvim"
+--		}
+--	},
+--	{
+--		"MaximilianLloyd/tw-values.nvim",
+--		keys = {
+--			{ "<leader>sv", "<cmd>TWValues<cr>", desc = "Show tailwind CSS values" },
+--		},
+--		opts = {
+--			border = "rounded", -- Valid window border style,
+--			show_unknown_classes = true -- Shows the unknown classes popup
 --		}
 --	},
 },
@@ -176,17 +193,16 @@ cmp_config.sources = {
 cmp.setup(cmp_config)
 
 -- nvim-autopairs
---local npairs = require("nvim-autopairs")
---npairs.setup({
---	check_ts = true,
---	break_undo = false,
---})
---local cmp_autopairs = require("nvim-autopairs.completion.cmp")
---local cmp = require("cmp")
---cmp.event:on(
---	"confirm_done",
---	cmp_autopairs.on_confirm_done()
---)
+local npairs = require("nvim-autopairs")
+npairs.setup({
+	check_ts = true,
+	break_undo = false,
+})
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+cmp.event:on(
+	"confirm_done",
+	cmp_autopairs.on_confirm_done()
+)
 
 -- nvim-surround
 require("nvim-surround").setup({})
@@ -255,6 +271,9 @@ require("nvim-treesitter.configs").setup {
 		-- the name of the parser)
 		-- list of language that will be disabled
 		disable = function(_, bufnr)
+			if vim.api.nvim_buf_get_option(bufnr, "filetype") == "gitcommit" then
+				return false
+			end
 			local buf_name = vim.api.nvim_buf_get_name(bufnr)
 			local file_size = vim.api.nvim_call_function("getfsize", { buf_name })
 			return file_size > 256 * 1024
@@ -313,3 +332,13 @@ vim.api.nvim_create_autocmd({ "BufReadPre" }, {
 		end
 	end
 })
+
+-- disable copilot in clojure and clojurescript files
+vim.api.nvim_create_autocmd({ "BufReadPre" }, {
+	pattern = { "*.clj", "*.cljs" },
+	callback = function()
+		vim.cmd("let b:copilot_enabled = 0")
+	end
+})
+
+vim.o.fixeol = false
