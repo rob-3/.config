@@ -52,12 +52,7 @@ alias vim=:
 alias vimdiff="nvim -d"
 alias rgf="rg --files"
 export GPG_TTY=$(tty)
-# theming
-#source .theme.sh
-#alias dark="cp ~/.config/kitty/kitty-themes/themes/Solarized_Dark.conf ~/.config/kitty/kitty-themes/themes/current.conf && cp ~/.dark.sh ~/.theme.sh"
-#alias light="cp ~/.config/kitty/kitty-themes/themes/Solarized_Light.conf ~/.config/kitty/kitty-themes/themes/current.conf && cp ~/.light.sh ~/.theme.sh"
-alias dark="kitty +kitten themes --reload-in=all Solarized\ Dark && echo \"export THEME=0\" > ~/.theme.sh && export THEME=0"
-alias light="kitty +kitten themes --reload-in=all Solarized\ Light && echo \"export THEME=1\" > ~/.theme.sh && export THEME=1"
+
 export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 gpgconf --launch gpg-agent
 gpg-connect-agent /bye
