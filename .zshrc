@@ -37,7 +37,8 @@ bindkey ' ' magic-space
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^ ' autosuggest-execute
-bindkey '^l' autosuggest-accept
+#bindkey '^l' autosuggest-accept
+#bindkey '^]' autosuggest-accept
 #bindkey '^[[[CE' autosuggest-execute
 bindkey '^j' history-substring-search-down
 bindkey '^k' history-substring-search-up
@@ -99,6 +100,7 @@ export EDITOR=nvim
 
 export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+export PATH="/opt/homebrew/Cellar/sqlite/3.43.2/bin:$PATH"
 
 zle-line-init() {
 echo -ne "\e[2 q"

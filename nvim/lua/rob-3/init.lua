@@ -13,6 +13,9 @@ if not is_small then
 	vim.api.nvim_command("syntax off")
 end
 
+-- unmap tab
+vim.cmd("let g:copilot_no_tab_map = v:true")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	  vim.fn.system({
@@ -41,11 +44,12 @@ require("lazy").setup({
 			ts_update()
 		end,
 	},
-	"mbbill/undotree",
+--	"mbbill/undotree",
 	"tpope/vim-fugitive",
 	"farmergreg/vim-lastplace",
 	"kylechui/nvim-surround",
-	"airblade/vim-gitgutter",
+	--"airblade/vim-gitgutter",
+	"lewis6991/gitsigns.nvim",
 	"nvchad/nvim-colorizer.lua",
 	"NMAC427/guess-indent.nvim",
 	{
@@ -144,8 +148,10 @@ require("lazy").setup({
   },
 })
 
+require('gitsigns').setup()
+
 -- undotree
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+--vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 -- colorscheme
 require("tokyonight").setup({
@@ -183,6 +189,10 @@ cmp_config.mapping["<S-Tab>"] = nil
 --cmp_config.mapping["<CR>"] = nil
 cmp_config.mapping["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), {'i','c'})
 cmp_config.mapping["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), {'i','c'})
+cmp_config.mapping["<C-u>"] = cmp.mapping.scroll_docs(-4)
+cmp_config.mapping["<C-d>"] = cmp.mapping.scroll_docs(4)
+cmp_config.mapping["<C-f>"] = cmp.mapping.scroll_docs(4)
+cmp_config.mapping["<C-b>"] = cmp.mapping.scroll_docs(-4)
 cmp_config.experimental = { ghost_text = false }
 cmp_config.sources = {
 	{ name = "path" },
